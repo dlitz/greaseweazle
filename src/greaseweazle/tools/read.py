@@ -68,8 +68,8 @@ def read_with_retry(usb, args, t, decoder):
         print(s)
         if dat.nr_missing() == 0:
             break
-        want_retries = args.eod_retries_hack if args.eod_retries_hack is not None else args.retries
-        want_seek_retries = args.eod_seek_retries_hack if args.eod_seek_retries_hack is not None else args.seek_retries
+        want_retries = args.eod_retries_hack if cyl > 79 and args.eod_retries_hack is not None else args.retries
+        want_seek_retries = args.eod_seek_retries_hack if cyl > 79 and args.eod_seek_retries_hack is not None else args.seek_retries
         if (retry % want_retries) == 0:
             if seek_retry == want_seek_retries:
                 print("T%u.%u: Giving up: %d sectors missing"
