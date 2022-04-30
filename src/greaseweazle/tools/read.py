@@ -67,8 +67,10 @@ def read_with_retry(usb, args, t, decoder):
         print(s)
         if dat.nr_missing() == 0:
             break
-        if (retry % args.retries) == 0:
-            if seek_retry == args.seek_retries:
+        want_retries = args.eod_retries_hack if args.eod_retries_hack is not None else args.retries
+        want_seek_retries = args.eod_seek_retries_hack if args.eod_seek_retries_hack is not None else args.seek_retries
+        if (retry % want_retries) == 0:
+            if seek_retry == want_seek_retries:
                 print("T%u.%u: Giving up: %d sectors missing"
                       % (cyl, head, dat.nr_missing()))
                 break
@@ -181,6 +183,10 @@ def main(argv):
                         help="number of seek retries")
     parser.add_argument("-n", "--no-clobber", action="store_true",
                         help="do not overwrite an existing file")
+    parser.add_argument('--eod-retries-hack', type=int,
+                        help="Do a different number of retries on cylinders above 79")
+    parser.add_argument('--eod-seek-retries-hack', type=int,
+                        help="Do a different number of seek-retries on cylinders above 79")
     parser.add_argument("file", help="output filename")
     parser.description = description
     parser.prog += ' ' + argv[1]
