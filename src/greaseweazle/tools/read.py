@@ -84,8 +84,16 @@ def read_with_retry(usb: USB.Unit, args, t) -> Tuple[Flux, Optional[HasFlux]]:
         print(s)
         if dat.nr_missing() == 0:
             break
-        if args.retries == 0 or (retry % args.retries) == 0:
-            if args.retries == 0 or seek_retry > args.seek_retries:
+        if cyl > args.eod_cylinder_hack and args.eod_retries_hack is not None:
+            want_retries = args.eod_retries_hack
+        else:
+            want_retries = args.retries
+        if cyl > args.eod_cylinder_hack and args.eod_seek_retries_hack is not None:
+            want_seek_retries = args.eod_seek_retries_hack
+        else:
+            want_seek_retries = args.seek_retries
+        if args.retries == 0 or (retry % want_retries) == 0:
+            if args.retries == 0 or seek_retry > want_seek_retries:
                 print("%s: Giving up: %d sectors missing"
                       % (tspec, dat.nr_missing()))
                 break
@@ -219,6 +227,12 @@ def main(argv) -> None:
                         help="drive interface density select on pin 2 (H,L)")
     parser.add_argument("--reverse", action="store_true",
                         help="reverse track data (flippy disk)")
+    parser.add_argument('--eod-cylinder-hack', type=int, metavar="EODCYLINDER", default=79,
+                        help="Highest cylinder number before --eod-*-hack applies.")
+    parser.add_argument('--eod-retries-hack', type=int,
+                        help="Do a different number of retries on cylinders above EODCYLINDER")
+    parser.add_argument('--eod-seek-retries-hack', type=int,
+                        help="Do a different number of seek-retries on cylinders above EODCYLINDER")
     parser.add_argument("file", help="output filename")
     parser.description = description
     parser.prog += ' ' + argv[1]
