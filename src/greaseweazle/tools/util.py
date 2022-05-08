@@ -255,8 +255,12 @@ def with_drive_selected(fn, usb, args, *_args, **_kwargs):
             raise error.Fatal("Device does not support " + str(args.drive[0]))
         raise
     try:
-        usb.drive_select(args.drive[1])
+        # Amiga external drives use an /MTRX line, which is latched on the
+        # falling edge of drive_select.  We issue drive_motor here *before*
+        # drive_select, to allow these drives to work just by wiring an
+        # appropriate connector.
         usb.drive_motor(args.drive[1], _kwargs.pop('motor', True))
+        usb.drive_select(args.drive[1])
         fn(usb, args, *_args, **_kwargs)
     except KeyboardInterrupt:
         print()
@@ -265,7 +269,10 @@ def with_drive_selected(fn, usb, args, *_args, **_kwargs):
     finally:
         usb.drive_motor(args.drive[1], False)
         usb.drive_deselect()
-
+        # Pulse the drive-select line, to latch the new drive_motor value on
+        # some drives (see above).
+        usb.drive_select(args.drive[1])
+        usb.drive_deselect()
 
 def valid_ser_id(ser_id):
     return ser_id and ser_id.upper().startswith("GW")
