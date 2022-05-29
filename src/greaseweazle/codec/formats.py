@@ -151,6 +151,14 @@ class Format_IBM_1200(Format):
         self.default_revs = m.default_revs
         super().__init__()
 
+class Format_IBM_1680(Format):
+    img_compatible = True
+    def __init__(self):
+        import greaseweazle.codec.ibm.mfm as m
+        self.fmt = m.IBM_MFM_1680
+        self.default_revs = m.default_revs
+        super().__init__()
+
 class Format_Atari_90(Format):
     img_compatible = True
     default_trackset = 'c=0-39:h=0:step=2'
@@ -249,6 +257,7 @@ formats = OrderedDict({
     'ibm.720': Format_IBM_720,
     'ibm.1200': Format_IBM_1200,
     'ibm.1440': Format_IBM_1440,
+    'ibm.1680': Format_IBM_1680,
     'sega.sf7000': Format_Sega_SF7000,
 })
 
