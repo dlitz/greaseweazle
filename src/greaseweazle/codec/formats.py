@@ -233,6 +233,16 @@ class Format_Sega_SF7000(Format):
         self.default_revs = m.default_revs
         super().__init__()
 
+class Format_TandyCoCo_158(Format):
+    img_compatible = True
+    default_trackset = 'c=0-34:h=0'
+    max_trackset = 'c=0-39:h=0'
+    def __init__(self):
+        import greaseweazle.codec.ibm.mfm as m
+        self.fmt = m.Tandy_CoCo
+        self.default_revs = m.default_revs
+        super().__init__()
+
     
 formats = OrderedDict({
     'acorn.dfs.ss': Format_Acorn_DFS_SS,
@@ -260,6 +270,7 @@ formats = OrderedDict({
     'ibm.1680': Format_IBM_1680,
     'ibm.dmf': Format_IBM_1680,
     'sega.sf7000': Format_Sega_SF7000,
+    'tandycoco.158': Format_TandyCoCo_158,
 })
 
 def print_formats(f = None):
