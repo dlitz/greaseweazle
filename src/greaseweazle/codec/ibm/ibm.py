@@ -209,6 +209,8 @@ class Sector(TrackArea):
         s += " " + str(self.idam) + "\n"
         s += " " + str(self.dam)
         return s
+    def __repr__(self):
+        return f'<{type(self).__name__} object at 0x{id(self):x} {str(self)}>'
     def delta(self, delta):
         super().delta(delta)
         self.idam.delta(delta)
